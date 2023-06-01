@@ -632,8 +632,6 @@ static int msg_unpack(can_msg_t *msg, FILE *c, const char *name, bool motorola_u
 		fprintf(c, "\tregister uint64_t i = %s(data);\n", swap_motorola ? "" : "reverse_byte_order");
 	if (!message_has_signals)
 		fprintf(c, "\tUNUSED(o);\n\tUNUSED(data);\n");
-	if (msg->dlc)
-		fprintf(c, "\tif (dlc < %u)\n\t\treturn -1;\n", msg->dlc);
 	else
 		fprintf(c, "\tUNUSED(dlc);\n");
 

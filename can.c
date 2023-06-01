@@ -122,7 +122,7 @@ static signal_t *ast2signal(mpc_ast_t *top, mpc_ast_t *ast, unsigned can_id)
 	mpc_ast_t *name   = mpc_ast_get_child(ast, "name|ident|regex");
 	mpc_ast_t *start  = mpc_ast_get_child(ast, "startbit|integer|regex");
 	mpc_ast_t *length = mpc_ast_get_child(ast, "length|regex");
-	mpc_ast_t *endianess = mpc_ast_get_child(ast, "endianess|char");
+	mpc_ast_t *endianess = mpc_ast_get_child(ast, "endianess|integer|regex");
 	mpc_ast_t *sign   = mpc_ast_get_child(ast, "sign|char");
 	sig->name = duplicate(name->contents);
 	sig->val_list = NULL;
@@ -131,11 +131,9 @@ static signal_t *ast2signal(mpc_ast_t *top, mpc_ast_t *ast, unsigned can_id)
 	assert(r == 1 && sig->start_bit <= 64);
 	r = sscanf(length->contents, "%u", &sig->bit_length);
 	assert(r == 1 && sig->bit_length <= 64);
-	char endchar = endianess->contents[0];
-	assert(endchar == '0' || endchar == '1');
-	sig->endianess = endchar == '0' ?
-		endianess_motorola_e :
-		endianess_intel_e ;
+	r = sscanf(length->contents, "%u", &sig->endianess);
+	assert(r == 1);
+
 	char signchar = sign->contents[0];
 	assert(signchar == '+' || signchar == '-');
 	sig->is_signed = signchar == '-';
